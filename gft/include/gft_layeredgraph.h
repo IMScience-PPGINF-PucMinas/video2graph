@@ -1,0 +1,61 @@
+
+#ifndef _GFT_LAYEREDGRAPH_H_
+#define _GFT_LAYEREDGRAPH_H_
+
+#include "gft_common.h"
+#include "gft_stack.h"
+#include "gft_graph.h"
+#include "gft_imagegraph.h"
+#include "gft_scene32.h"
+#include "gft_adjrel3.h"
+
+
+namespace gft{
+  namespace LayeredGraph{
+
+    struct sLayeredGraph {
+      int nlayers;
+      int nnodesperlayer;
+      sGraph *graph;
+    };
+
+    sLayeredGraph *Create(int nlayers, int nnodesperlayer);
+    void Destroy(sLayeredGraph **lg);
+
+    //2D images:
+    void SetArcs(sLayeredGraph *lg, sImageGraph *sg, int l);
+    void SetArcs(sLayeredGraph *lg,
+		 int l_orig, int l_dest,
+		 int ncols,
+		 float w, float r);
+
+    //3D images:
+    void SetArcs(sLayeredGraph *lg, sScene32 *sw, int l);
+    void SetArcs(sLayeredGraph *lg, sScene32 *sw,
+		 sScene32 *scn, int pol, int l);
+    void SetArcs(sLayeredGraph *lg,
+		 int l_orig, int l_dest,
+		 sScene32 *scn,
+		 float w, float r);
+    
+    //ND images:
+    void SetArcs(sLayeredGraph *lg, sGraph *g, int l);
+
+    void SetArcs(sLayeredGraph *lg,
+		 int l_orig, int l_dest,
+		 float w);
+    
+    void TransposeLayer(sLayeredGraph *lg, int l);
+    
+
+  } //end LayeredGraph namespace
+
+  typedef LayeredGraph::sLayeredGraph sLayeredGraph;
+
+} //end gft namespace
+
+    
+#endif
+
+
+    

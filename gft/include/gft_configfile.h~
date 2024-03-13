@@ -1,0 +1,26 @@
+
+#ifndef _GFT_CONFIGFILE_H_
+#define _GFT_CONFIGFILE_H_
+
+#include "gft_attributelist.h"
+
+namespace gft{
+  namespace ConfigFile{
+
+    typedef struct _configFile{
+      gft::AttributeList::AttributeList **lines;
+      int nlines;
+    } ConfigFile;
+    
+    
+    ConfigFile *Create();
+    void Destroy(ConfigFile **cf);
+    
+    ConfigFile *Read(char filename[]);
+
+  } //end ConfigFile namespace
+} //end gft namespace
+
+ 
+#endif
+

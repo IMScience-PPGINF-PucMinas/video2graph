@@ -1,0 +1,79 @@
+/*
+IFT:
+custo favoravel   0 
+custo normal      > 0, < INT_MAX
+aresta impossivel INT_MAX
+
+GC:
+custo favoravel   INT_MAX = CAP_MAX
+custo normal      > 0, < INT_MAX
+aresta impossivel 0
+*/
+
+#ifndef _GFT_IMAGEGRAPHPX_H_
+#define _GFT_IMAGEGRAPHPX_H_
+
+#include "gft_common.h"
+#include "gft_image32.h"
+#include "gft_cimage.h"
+#include "gft_adjrel.h"
+#include "gft_filtering.h"
+
+#define DISSIMILARITY 0
+#define CAPACITY      1
+
+namespace gft{
+
+  namespace ImageGraphPx{
+
+    // Image Sparse Graph:
+    // n-links connect pairs of neighboring pixels.
+    struct ImageGraphPx {
+      int type;
+      int Wmax;
+      int ncols, nrows;
+      sAdjRel *A;
+      /*private: References to external images*/
+      sImage32 *W;
+      sImage32 *img;
+      sCImage *cimg;
+    };
+    
+    ImageGraphPx *ByAbsDiff(sImage32 *img, float r);
+    ImageGraphPx *ByAbsDiff(sCImage *cimg,  float r);
+    ImageGraphPx *ByWeightImage(sImage32 *W, float r);
+    
+    //------ ImageGraphPx Functions ------------
+    
+    void           Destroy(ImageGraphPx **g);
+    ImageGraphPx  *Create(int ncols, int nrows, 
+			  sAdjRel *A);
+    ImageGraphPx  *Clone(ImageGraphPx *g);
+
+    /*
+    void          ChangeType(ImageGraphPx *sg, 
+			     int type);
+    
+    void          Pow(ImageGraphPx *sg, int power, int max);
+    
+    void Orient2Digraph(ImageGraphPx *sg, 
+			Image32::Image32 *img,
+			float per);
+    
+    void Orient2DigraphInner(ImageGraphPx *sg, 
+			     Image32::Image32 *P_sum);
+    void Orient2DigraphOuter(ImageGraphPx *sg, 
+			     Image32::Image32 *P_sum);
+    */
+    
+  } //end ImageGraphPx namespace
+
+  typedef ImageGraphPx::ImageGraphPx sImageGraphPx;
+
+  
+} //end gft namespace
+
+
+#endif
+
+

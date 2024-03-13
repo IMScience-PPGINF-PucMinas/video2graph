@@ -1,0 +1,147 @@
+
+#ifndef _GFT_GRAPH_H_
+#define _GFT_GRAPH_H_
+
+#include "gft_common.h"
+#include "gft_stack.h"
+#include "gft_image32.h"
+#include "gft_filtering.h"
+#include "gft_imagegraph.h"
+#include "gft_bmap.h"
+#include "gft_cimage32f.h"
+#include "gft_scene32.h"
+#include "gft_adjrel.h"
+#include "gft_adjrel3.h"
+
+namespace gft{
+  namespace Graph{
+
+    struct sGraphNode {
+      int outdegree;
+      int arraysize;
+      int id;
+      /*Adjacency lists (lists of nodes that are adjacent to a given node)*/
+      int *adjList;
+      int *Warcs;
+    };
+
+    struct sGraph {
+      int type;
+      int nnodes;
+      sGraphNode *nodes;
+      int        *Wnodes;
+    };
+
+    /* A utility function that creates a graph of 'nnodes' vertices */
+    sGraph *Create(int nnodes, int outdegree, int *Wnodes);
+    sGraph *Clone(sGraph *graph);
+    sGraph *Clone(sImageGraph *sg);
+    sGraph *Transpose(sGraph *graph);
+    
+    void   Destroy(sGraph **graph);
+
+    int GetNumberOfArcs(sGraph *graph);
+    int GetArcWeight(sGraph *graph, int src, int dest);
+    int GetArcIndex(sGraph *graph, int src, int dest);
+    
+    /* Adds an edge to an undirected graph */
+    void AddEdge(sGraph *graph, int src, int dest, int w);
+    
+    /* Adds an arc to a directed graph */
+    void AddDirectedEdge(sGraph *graph, int src, int dest, int w);
+    void AddDirectedEdgeIfNonexistent(sGraph *graph, int src, int dest, int w);
+
+    void UpdateEdge(sGraph *graph, int src, int dest, int w);
+    void UpdateDirectedEdge(sGraph *graph, int src, int dest, int w);
+
+    void UpdateDirectedEdgeIfHigher(sGraph *graph, int src, int dest, int w);
+
+    int GetMaximumArc(sGraph *graph);
+    
+    /*Tarjan's algorithm is a procedure for finding strongly connected components of a directed graph.*/
+    int *Tarjan(sGraph *graph);
+
+    int *Tarjan(sGraph *graph, int p);
+
+    int *Tarjan(sGraph *graph, int *V, int n);
+
+    void ChangeType(sGraph *graph, int type);
+
+    void ChangeWeight(sGraph *graph,
+		      int old_val, int new_val);
+    
+    void Pow(sGraph *graph, int power, int max);
+    
+    void HedgehogDigraph(sGraph *graph,
+			 sImage32 *cost,
+			 float theta,
+			 float r);
+
+    //Transitive reduction of DAG
+    void LocalBandReduction(sGraph **graph,
+			    sImage32 *cost,
+			    int delta);
+    
+    void LocalBandConstraint(sGraph *graph,
+			     sImage32 *cost,
+			     int delta,
+			     float r);
+
+    /*Region Adjacency Graph (RAG)*/
+    sGraph *RAG(sCImage *cimg,
+		sImage32 *label);
+
+    sGraph *RAG_lab(sCImage *cimg,
+		    sImage32 *label);
+    
+    sGraph *RAG(sCImage *cimg,
+		sImage32 *label,
+		int c1,
+		int c2,
+		float polarity);
+
+    sGraph *RAG_lab(sCImage *cimg,
+		    sImage32 *label,
+		    int c1,
+		    int c2,
+		    float polarity);
+
+    sGraph *RAG_lab_2(sCImage *cimg,
+		      sImage32 *label,
+		      int c1,
+		      int c2,
+		      float polarity);
+
+    sGraph *RAG_lab_3(sCImage *cimg,
+		      sImage32 *label,
+		      int c1,
+		      int c2,
+		      float polarity);
+    
+    sGraph *RAG(sImage32 *img,
+		sImage32 *label);
+
+    sGraph *RAG(sImage32 *img,
+		sImage32 *label,
+		float polarity);
+
+    sGraph *RAG(sScene32 *scn,
+		sScene32 *label);
+
+    sGraph *RAG(sScene32 *scn,
+		sScene32 *label,
+		float polarity);    
+    
+    sGraph *Split(sGraph **G, int *label, int lb);
+
+    
+  } //end Graph namespace
+
+  typedef Graph::sGraph sGraph;
+  typedef Graph::sGraphNode sGraphNode;
+  
+} //end gft namespace
+
+    
+#endif
+
