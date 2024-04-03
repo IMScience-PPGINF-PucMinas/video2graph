@@ -84,30 +84,38 @@ float **Liberar_matriz(int m, int n, float **v)
         printf("** Erro: Parametro invalido**\n");
         return (v);
     }
-    for (i = 0; i < m; i++) {
-        if (v[i] != NULL) {
+    for (i = 0; i < m; i++)
+    {
+        if (v[i] != NULL)
+        {
             free(v[i]); /* libera as linhas da matriz */
             v[i] = NULL;
         }
     }
-        
-    free(v);        /* libera a matriz */
-    return (NULL);  /* retorna um ponteiro nulo */
+
+    free(v);       /* libera a matriz */
+    return (NULL); /* retorna um ponteiro nulo */
 }
 
-void Liberar_Video(Image **video, int frames, int num_pixels) {
+void Liberar_Video(Image **video, int frames, int num_pixels)
+{
 
-    for(int j = 0; j < frames; j++) {
+    for (int j = 0; j < frames; j++)
+    {
 
-        for (int i = 0; i < num_pixels; i++) {
-            if (video[j]->val[i]) {
+        for (int i = 0; i < num_pixels; i++)
+        {
+            if (video[j]->val[i])
+            {
                 free(video[j]->val[i]);
             }
         }
-        if (video[j]->val) {
+        if (video[j]->val)
+        {
             free(video[j]->val);
         }
-        if (video[j]) {
+        if (video[j])
+        {
             free(video[j]);
         }
     }
@@ -129,7 +137,7 @@ int GetMaxValVoxel(gft::sImage32 **scnLabel, int num_frames)
     return (max);
 }
 
-float **getAverageColor(gft::sImage32 **scnLabel, Image **video, int num_frames, int Imax, int** randowColorLabels, int typeOfColoring)
+float **getAverageColor(gft::sImage32 **scnLabel, Image **video, int num_frames, int Imax, int **randowColorLabels, int typeOfColoring)
 {
     int nnodes, i, k, l, n;
     // float *value[3];
@@ -148,69 +156,77 @@ float **getAverageColor(gft::sImage32 **scnLabel, Image **video, int num_frames,
         printf("Error\n");
         exit(1);
     }
-    
-    //printf("num_frames: %d\n", num_frames);
-    for (i = 0; i < n; i++) {
+
+    // printf("num_frames: %d\n", num_frames);
+    for (i = 0; i < n; i++)
+    {
         for (k = 0; k < num_frames; k++)
         {
             l = scnLabel[k]->data[i];
-            size[l] += 1;            
+            size[l] += 1;
             value[0][l] += video[k]->val[i][0];
             value[1][l] += video[k]->val[i][1];
             value[2][l] += video[k]->val[i][2];
         }
     }
-    //printf("nnodes: %d   -  n: %d    -    Imax: %d\n", nnodes, n, Imax);
+    // printf("nnodes: %d   -  n: %d    -    Imax: %d\n", nnodes, n, Imax);
 
     for (l = 0; l < nnodes; l++)
     {
         if (size[l] > 0)
         {
-            if (randowColorLabels[l][0] == -1) {
+            if (randowColorLabels[l][0] == -1)
+            {
                 randowColorLabels[l][0] = dis(gen);
                 randowColorLabels[l][1] = dis(gen);
                 randowColorLabels[l][2] = dis(gen);
             }
 
-            if (typeOfColoring == 0) {
+            if (typeOfColoring == 0)
+            {
                 value[0][l] /= size[l];
                 value[1][l] /= size[l];
                 value[2][l] /= size[l];
-            } else {
+            }
+            else
+            {
                 value[0][l] = randowColorLabels[l][0];
                 value[1][l] = randowColorLabels[l][1];
                 value[2][l] = randowColorLabels[l][2];
             }
-        } //else {
-            //printf("Empty regions in RAG: %d  -  l: %d\n", size[l], l);
+        } // else {
+          // printf("Empty regions in RAG: %d  -  l: %d\n", size[l], l);
         //}
     }
-    //gft::FreeIntArray(&size);
-    
+    // gft::FreeIntArray(&size);
+
     return value;
 }
 
-int computedSupervoxelsVideo (int** randowColorLabels, int nSVX) {
+int computedSupervoxelsVideo(int **randowColorLabels, int nSVX)
+{
     int nSupervoxelsVideo = 0;
 
-    for (int i = 0; i < nSVX; i++) {
-        if (randowColorLabels[i][0] != -1) {
+    for (int i = 0; i < nSVX; i++)
+    {
+        if (randowColorLabels[i][0] != -1)
+        {
             nSupervoxelsVideo++;
         }
     }
-    
+
     return nSupervoxelsVideo;
 }
 
-Image **copyTreeIntersection(Image **original, Image **intersecao, int nImagesIntersecao, int num_rows, int num_cols, int num_frames, Intersection* intersection)
+Image **copyTreeIntersection(Image **original, Image **intersecao, int nImagesIntersecao, int num_rows, int num_cols, int num_frames, Intersection *intersection)
 {
     int num_pixels = num_cols * num_rows;
     int nframeOriginal = 0;
     int position = -1;
-    
+
     // Reservo espaco na memoria para vetor com as imagens da intersecao
     intersecao = (Image **)malloc(nImagesIntersecao * sizeof(Image *));
-    
+
     // Reservar espaço na memoria para cada imagem da intersecao
     for (int f = 0; f < nImagesIntersecao; f++)
     {
@@ -231,20 +247,27 @@ Image **copyTreeIntersection(Image **original, Image **intersecao, int nImagesIn
     return intersecao;
 }
 
-void Liberar_Intersection(Image **intersecao, int nImagesIntersecao, int num_pixels) {
+void Liberar_Intersection(Image **intersecao, int nImagesIntersecao, int num_pixels)
+{
 
-    if (intersecao != nullptr) {
-        for(int j = 0; j < nImagesIntersecao; j++) {
+    if (intersecao != nullptr)
+    {
+        for (int j = 0; j < nImagesIntersecao; j++)
+        {
 
-            for (int i = 0; i < num_pixels; i++) {
-                if (intersecao[j]->val[i] != nullptr) {
+            for (int i = 0; i < num_pixels; i++)
+            {
+                if (intersecao[j]->val[i] != nullptr)
+                {
                     free(intersecao[j]->val[i]);
                 }
             }
-            if (intersecao[j]->val != nullptr) {
+            if (intersecao[j]->val != nullptr)
+            {
                 free(intersecao[j]->val);
             }
-            if (intersecao[j] != nullptr) {
+            if (intersecao[j] != nullptr)
+            {
                 free(intersecao[j]);
             }
         }
@@ -252,9 +275,11 @@ void Liberar_Intersection(Image **intersecao, int nImagesIntersecao, int num_pix
     }
 }
 
-void printIntersecao (Image **intersecao, int nImagesIntersecao, int num_rows, int num_cols) {
+void printIntersecao(Image **intersecao, int nImagesIntersecao, int num_rows, int num_cols)
+{
     int num_pixels = num_cols * num_rows;
-    if (intersecao) {
+    if (intersecao)
+    {
         for (int f = 0; f < nImagesIntersecao; f++)
         {
             for (int i = 0; i < num_pixels; i++)
@@ -262,29 +287,35 @@ void printIntersecao (Image **intersecao, int nImagesIntersecao, int num_rows, i
                 printf("val = %d \t - ", intersecao[f]->val[i][0]);
             }
         }
-    } 
+    }
 }
 
-void gravarArvoresEmArquivo (Image **original, Image **intersecao, int num_rows, int num_cols, int num_frames, int nImagesIntersecao, std::string fileNameBloco, std::string fileNameIntersecao, std::string debug, int bloco, Intersection* intersection) {
+void gravarArvoresEmArquivo(Image **original, Image **intersecao, int num_rows, int num_cols, int num_frames, int nImagesIntersecao, std::string fileNameBloco, std::string fileNameIntersecao, std::string debug, int bloco, Intersection *intersection)
+{
     int num_pixels = num_cols * num_rows;
     int aux = 1;
     int positionLabel = -1;
     std::ofstream intersecaoFile(fileNameIntersecao, std::ios::app);
 
     intersecaoFile << debug << " - bloco: " << bloco << "\n";
-    if (intersecao) {
+    if (intersecao)
+    {
         for (int f = 0; f < nImagesIntersecao; f++)
         {
             aux = 1;
             for (int i = 0; i < num_pixels; i++)
             {
-                if (intersecao[f]->val[i][0] < 10) {
+                if (intersecao[f]->val[i][0] < 10)
+                {
                     intersecaoFile << intersecao[f]->val[i][0] << "  ";
-                } else {
+                }
+                else
+                {
                     intersecaoFile << intersecao[f]->val[i][0] << " ";
                 }
-                
-                if ((aux % num_rows) == 0) {
+
+                if ((aux % num_rows) == 0)
+                {
                     intersecaoFile << "\n";
                 }
                 aux++;
@@ -292,8 +323,8 @@ void gravarArvoresEmArquivo (Image **original, Image **intersecao, int num_rows,
             intersecaoFile << "\n";
         }
     }
-	intersecaoFile.close();
-    
+    intersecaoFile.close();
+
     std::ofstream originalFile(fileNameBloco, std::ios::app);
 
     originalFile << debug << " - bloco: " << bloco << "\n";
@@ -303,13 +334,17 @@ void gravarArvoresEmArquivo (Image **original, Image **intersecao, int num_rows,
         for (int i = 0; i < num_pixels; i++)
         {
             positionLabel = original[f]->val[i][0] % intersection->amountLabels;
-            if (intersection->labels[positionLabel] < 10) {
+            if (intersection->labels[positionLabel] < 10)
+            {
                 originalFile << intersection->labels[positionLabel] << "  ";
-            } else {
+            }
+            else
+            {
                 originalFile << intersection->labels[positionLabel] << " ";
             }
 
-            if ((aux % num_rows) == 0) {
+            if ((aux % num_rows) == 0)
+            {
                 originalFile << "\n";
             }
             aux++;
@@ -321,26 +356,44 @@ void gravarArvoresEmArquivo (Image **original, Image **intersecao, int num_rows,
 
 // GRAFO TEMPORAL
 
-int edge_n = 733;
-
-void writeGraph(const std::vector<std::vector<int>>& adjMat, const std::unordered_map<int, int>& vals, int frame, int label) {
-    std::string indicator_path = "./graph/graph_indicator.txt";
-    std::string edges_path = "./graph/A.txt";
+void writeLabel(int label)
+{
     std::string graph_labels_path = "./graph/graph_labels.txt";
-    std::string edge_attributes_path = "./graph/edge_attributes.txt";
-
     std::ofstream graph_labels(graph_labels_path, std::ios_base::app);
-    std::ofstream indicator(indicator_path, std::ios_base::app);
-    std::ofstream edges(edges_path, std::ios_base::app);
-    std::ofstream edge_attributes(edge_attributes_path, std::ios_base::app);
 
     graph_labels << label << "\n";
     graph_labels.close();
+}
 
-    for (std::vector<int>::size_type i = 0; i < adjMat.size(); ++i) {
-        indicator << frame << "\n"; 
-        for (std::vector<int>::size_type j = 0; j < adjMat[i].size(); ++j) {
-            if (adjMat[i][j] > 0) {
+int edge_n = 0;
+
+void writeGraph(const std::vector<std::vector<int>> &adjMat, const std::unordered_map<int, int> &vals, int video, int frame)
+{
+    std::string indicator_path = "./graph/graph_indicator.txt";
+    std::string frame_path = "./graph/frame_indicator.txt";
+    std::string edges_path = "./graph/A.txt";
+    // std::string graph_labels_path = "./graph/graph_labels.txt";
+    std::string edge_attributes_path = "./graph/edge_attributes.txt";
+    std::string node_path = "./graph/node_labels.txt";
+
+    // std::ofstream graph_labels(graph_labels_path, std::ios_base::app);
+    std::ofstream indicator(indicator_path, std::ios_base::app);
+    std::ofstream frames(frame_path, std::ios_base::app);
+    std::ofstream edges(edges_path, std::ios_base::app);
+    std::ofstream edge_attributes(edge_attributes_path, std::ios_base::app);
+    std::ofstream node(node_path, std::ios_base::app);
+
+    // graph_labels << label << "\n";
+    // graph_labels.close();
+
+    for (std::vector<int>::size_type i = 0; i < adjMat.size(); ++i)
+    {
+        indicator << video << "\n";
+        frames << frame << "\n";
+        for (std::vector<int>::size_type j = 0; j < adjMat[i].size(); ++j)
+        {
+            if (adjMat[i][j] > 0)
+            {
                 edges << i + 1 + edge_n << ", " << j + 1 + edge_n << "\n";
                 edge_attributes << 0 << "\n";
             }
@@ -348,18 +401,23 @@ void writeGraph(const std::vector<std::vector<int>>& adjMat, const std::unordere
     }
     edge_n += vals.size();
     indicator.close();
+    frames.close();
     edges.close();
     edge_attributes.close();
 }
 
-std::pair<std::vector<std::vector<int>>, std::unordered_map<int, int>> getAdj(Image* img, int rows, int cols) {
+std::pair<std::vector<std::vector<int>>, std::unordered_map<int, int>> getAdj(Image *img, int rows, int cols)
+{
     std::unordered_map<int, int> vals;
     int size = 0;
 
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
+    for (int i = 0; i < rows; ++i)
+    {
+        for (int j = 0; j < cols; ++j)
+        {
             int pixel = img->val[i][j];
-            if (vals.find(pixel) == vals.end()) {
+            if (vals.find(pixel) == vals.end())
+            {
                 vals[pixel] = size++;
             }
         }
@@ -367,42 +425,56 @@ std::pair<std::vector<std::vector<int>>, std::unordered_map<int, int>> getAdj(Im
 
     std::vector<std::vector<int>> adjMat(size, std::vector<int>(size, 0));
 
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
+    for (int i = 0; i < rows; ++i)
+    {
+        for (int j = 0; j < cols; ++j)
+        {
             int y = img->val[i][j];
             int reducedValue = vals[y];
-            
-            if (i - 1 >= 0) { // Left
+
+            if (i - 1 >= 0)
+            { // Left
                 int value = img->val[i - 1][j];
-                if (y != value) {
-                    if (vals.find(value) == vals.end()) {
+                if (y != value)
+                {
+                    if (vals.find(value) == vals.end())
+                    {
                         vals[value] = size++;
                     }
                     adjMat[reducedValue][vals[value]] = 1;
                 }
             }
-            if (j - 1 >= 0) { // Above
+            if (j - 1 >= 0)
+            { // Above
                 int value = img->val[i][j - 1];
-                if (y != value) {
-                    if (vals.find(value) == vals.end()) {
+                if (y != value)
+                {
+                    if (vals.find(value) == vals.end())
+                    {
                         vals[value] = size++;
                     }
                     adjMat[reducedValue][vals[value]] = 1;
                 }
             }
-            if (j + 1 < cols) { // Below
+            if (j + 1 < cols)
+            { // Below
                 int value = img->val[i][j + 1];
-                if (y != value) {
-                    if (vals.find(value) == vals.end()) {
+                if (y != value)
+                {
+                    if (vals.find(value) == vals.end())
+                    {
                         vals[value] = size++;
                     }
                     adjMat[reducedValue][vals[value]] = 1;
                 }
             }
-            if (i + 1 < rows) { // Right
+            if (i + 1 < rows)
+            { // Right
                 int value = img->val[i + 1][j];
-                if (y != value) {
-                    if (vals.find(value) == vals.end()) {
+                if (y != value)
+                {
+                    if (vals.find(value) == vals.end())
+                    {
                         vals[value] = size++;
                     }
                     adjMat[reducedValue][vals[value]] = 1;
@@ -414,11 +486,12 @@ std::pair<std::vector<std::vector<int>>, std::unordered_map<int, int>> getAdj(Im
     return {adjMat, vals};
 }
 
-void writeForOneFrame(Image **img, int rows, int cols, int frame, int label){
+void writeForOneFrame(Image **img, int rows, int cols, int video, int frame)
+{
     std::vector<std::vector<int>> adjMat;
     std::unordered_map<int, int> vals;
     std::tie(adjMat, vals) = getAdj(img[0], rows, cols);
-    writeGraph(adjMat, vals, frame, label);
+    writeGraph(adjMat, vals, video, frame);
 }
 
 int main(int argc, char **argv)
@@ -439,8 +512,9 @@ int main(int argc, char **argv)
     gft::sImage32 **scnLabel;
     float rateStopDecrement;
 
-    int frame = 70;
-    int label = 2;
+    int num_video = 1;
+    int frame = 1;
+    int label = 1;
 
     if (argc < 7)
     {
@@ -455,7 +529,7 @@ int main(int argc, char **argv)
         fprintf(stdout, "\t typeOfColoring....... Coloring type when saving segmented image. 0: Medium color - 1: Random color\n");
         fprintf(stdout, "\t propagatedMoreLabels....... Do tree merges, 1 if yes, 0 if no\n");
         fprintf(stdout, "\t rateStopDecrement....... Rate to stop supervoxel decrement. Ex.: 10, will be 0.10 of the number of supervoxels\n");
-
+        // ./streamISF ./dataset/handwaving1 output/handwaving1 9000 30 100 1 0 1 50
         exit(0);
     }
 
@@ -468,7 +542,7 @@ int main(int argc, char **argv)
     imgPorIntersecao = atoi(argv[6]);
     typeOfColoring = atoi(argv[7]);
     propagatedMoreLabels = atoi(argv[8]);
-    rateStopDecrement = (float) atoi(argv[9]) / 100.0;
+    rateStopDecrement = (float)atoi(argv[9]) / 100.0;
 
     nSVXcomputed = 0, k = 0;
 
@@ -488,12 +562,15 @@ int main(int argc, char **argv)
             }
         }
     }
+
+    num_frames -= 1;
+
     if (num_frames == 0)
     {
         fprintf(stderr, "Unable to find video frames at %s\n", filename);
         return 0;
     }
-    imgPorBloco = (int) ((((float) imgPorBloco)) * num_frames)/100;
+    imgPorBloco = (int)((((float)imgPorBloco)) * num_frames) / 100;
 
     // printf("Imagens por bloco: %d\n", imgPorBloco);
     // printf("Imagens por Interseção: %d\n", imgPorIntersecao);
@@ -517,9 +594,10 @@ int main(int argc, char **argv)
 
     // Matriz que guardará a respectiva cor de cada label para ao gravar imagem segmentada as cores de um bloco para outro serem as mesmas
     int numMaxTree = quantDeBlocos * nSVX;
-    //int numMaxTree = nSVX;
-    int** randowColorLabels = new int*[numMaxTree];
-    for (int i = 0; i < numMaxTree; i++) {
+    // int numMaxTree = nSVX;
+    int **randowColorLabels = new int *[numMaxTree];
+    for (int i = 0; i < numMaxTree; i++)
+    {
         randowColorLabels[i] = new int[3];
         randowColorLabels[i][0] = -1;
         randowColorLabels[i][1] = -1;
@@ -529,17 +607,19 @@ int main(int argc, char **argv)
     // Estratégia para conseguir um número aproximado de supervoxels no vídeo todo de forma que o número de supervoxels
     // por bloco vai decrescendo
     // aux = (int) (((float) nSVX) / quantDeBlocos);
-    if (propagatedMoreLabels == 1) {
-        aux = (int) (((((float) nSVX)) * quantDeBlocos) / 100.0);
+    if (propagatedMoreLabels == 1)
+    {
+        aux = (int)(((((float)nSVX)) * quantDeBlocos) / 100.0);
         // aux2 é o limite para não decrementar muito e ficar com muito pouco supervoxel no final
-        if (nSVX != 0) {
-            aux2 = (int) ( ((float) nSVX * rateStopDecrement));
+        if (nSVX != 0)
+        {
+            aux2 = (int)(((float)nSVX * rateStopDecrement));
         }
         sum = 0;
         k = nSVX;
     }
 
-    Intersection* intersection;
+    Intersection *intersection;
 
     for (int bloco = 0; bloco < quantDeBlocos; bloco++)
     {
@@ -555,68 +635,76 @@ int main(int argc, char **argv)
             frames = numFramesRestantes;
             numFramesRestantes = 0;
         }
-        if (bloco != 0) {
+        if (bloco != 0)
+        {
             frames = frames + imgPorIntersecao;
         }
-        
+
         // printf("Quantidade de frames no bloco %d = %d\n", (bloco + 1), frames);
 
         // Concatenate Images in a video structure
         video = (Image **)malloc(frames * sizeof(Image *));
         Image **video_border = (Image **)malloc(frames * sizeof(Image *));
-        sprintf(filepath, "%s/00001.ppm", filename);
+        sprintf(filepath, "%s/frame1.ppm", filename);
         img = ReadAnyImage(filepath);
 
         int i = 0;
         // O bloco terá as imagens da interseção juntamente com a quantidade de imagens estabelecidas por bloco
-        if (imgFrames != 1) {
+        if (imgFrames != 1)
+        {
             imgFrames = imgFrames - imgPorIntersecao;
         }
-        
+
         // printf("Comeca na imagem: %d   -   Frames no bloco: %d \n", imgFrames, frames);
 
         // Calcular a quantidade de supervoxels nos blocos
-        if (propagatedMoreLabels == 1) {
+        if (propagatedMoreLabels == 1)
+        {
             sum = aux + sum;
-            if (k > aux2) {
+            if (k > aux2)
+            {
                 k = nSVX - sum;
             }
-        } else {
+        }
+        else
+        {
             k = (nSVX - nSVXcomputed) / (quantDeBlocos - bloco);
         }
+
+        // Escreve o label da classe pra cada video
+        writeLabel(label);
 
         // Ler e armazenar as imagens do bloco atual na variavel video
         while (i < frames && imgFrames <= num_frames)
         {
             frame_id = imgFrames;
-            
-            sprintf(filepath, "%s/%05d.ppm", filename, frame_id);
-            //sprintf(filepath, "%s/frame%d.ppm", filename, frame_id);
+
+            sprintf(filepath, "%s/frame%d.ppm", filename, frame_id);
+            // sprintf(filepath, "%s/frame%d.ppm", filename, frame_id);
             imgD = loadImage(filepath);
 
-            //printf("%05d.ppm", frame_id);
+            // printf("%05d.ppm", frame_id);
 
             border_img = createImage(imgD->num_rows, imgD->num_cols, 1);
 
             video[i] = imgD;
             video_border[i] = border_img;
-        
+
             graph = createGraph(video, 1, i);
             label_video = runDISF(graph, p, k, 5, 1, 1, 1, NULL, 0);
-            
-            writeForOneFrame(label_video, video[i]->num_rows, video[i]->num_cols, frame, label);
+
+            writeForOneFrame(label_video, video[i]->num_rows, video[i]->num_cols, num_video, frame);
             frame++;
-            
+
             free(label_video);
 
             i++;
             imgFrames++;
-
         }
         num_pixels = video[0]->num_rows * video[0]->num_cols;
         graph = createGraph(video, frames, 0);
-        
-        //printf("passou do for\n");
+
+        // printf("passou do for\n");
 
         intersection = newIntersection(k);
 
@@ -625,31 +713,32 @@ int main(int argc, char **argv)
         /*========================================================*/
         start = clock(); //
         label_video = runDISF(graph, p, k, 5, 1, 1, 1, NULL, 0);
-        
-        
-        //printLabels(intersection);
-        //gravarArvoresEmArquivo (label_video, intersecao, graph->num_rows, graph->num_cols, frames, imgPorIntersecao, "original.txt", "intersecao.txt", "\n----------------label_video", bloco, intersection);
 
-        if (bloco != 0) {
+        // printLabels(intersection);
+        // gravarArvoresEmArquivo (label_video, intersecao, graph->num_rows, graph->num_cols, frames, imgPorIntersecao, "original.txt", "intersecao.txt", "\n----------------label_video", bloco, intersection);
+
+        if (bloco != 0)
+        {
             // Alterar valores de label para que seja maior que o maior número de label do bloco anterior
             changeLabelValue(initial_label, intersection);
-            //printLabels(intersection);
+            // printLabels(intersection);
 
-            //gravarArvoresEmArquivo (label_video, intersecao, graph->num_rows, graph->num_cols, frames, imgPorIntersecao, "original.txt", "intersecao.txt", "\n----------------após alteração de valor do label", bloco, intersection);
+            // gravarArvoresEmArquivo (label_video, intersecao, graph->num_rows, graph->num_cols, frames, imgPorIntersecao, "original.txt", "intersecao.txt", "\n----------------após alteração de valor do label", bloco, intersection);
 
             // Preencher informações de posição de labels para conseguir propagar as árvores da insterseção
-            insertIntersection (intersecao, label_video, num_pixels, intersection);
+            insertIntersection(intersecao, label_video, num_pixels, intersection);
 
             // Propagar árvores da interseção do bloco anterior para o próximo bloco
-            propagateIntersectingTrees (intersection, intersecao, propagatedMoreLabels);
-            //gravarArvoresEmArquivo (label_video, intersecao, graph->num_rows, graph->num_cols, frames, imgPorIntersecao, "original.txt", "intersecao.txt", "\n----------------após propagacao", bloco, intersection);
+            propagateIntersectingTrees(intersection, intersecao, propagatedMoreLabels);
+            // gravarArvoresEmArquivo (label_video, intersecao, graph->num_rows, graph->num_cols, frames, imgPorIntersecao, "original.txt", "intersecao.txt", "\n----------------após propagacao", bloco, intersection);
         }
 
         // Pegar o maior label para o próximo bloco
         initial_label = getMaxNumLabel(intersection) + 1;
 
         // Liberar memória da interseção, antes de alocar novamente
-        if (intersecao != NULL) {
+        if (intersecao != NULL)
+        {
             Liberar_Intersection(intersecao, imgPorIntersecao, num_pixels);
         }
 
@@ -659,17 +748,17 @@ int main(int argc, char **argv)
         end = clock();
         totaltime = ((double)(end - start)) / CLOCKS_PER_SEC;
         sumTotalTime = sumTotalTime + totaltime;
-        //printf("Time elapsed block %d: %.3f seconds\n", bloco, totaltime);
+        // printf("Time elapsed block %d: %.3f seconds\n", bloco, totaltime);
         /*========================================================*/
 
         if (label_video != NULL)
         {
             printf("Loaded Labels --> %s  - bloco: %d\n", filename, (bloco + 1));
-        }        
+        }
 
         // Aqui reserva espaço na memória para guardar as imagens de saída segmentadas
         j = 0;
-        scnLabel = new gft::sImage32*[frames];
+        scnLabel = new gft::sImage32 *[frames];
         for (z = 0; z < frames; z++)
         {
             scnLabel[z] = gft::Image32::Create(img);
@@ -689,7 +778,8 @@ int main(int argc, char **argv)
         }
         printf("Preparing to save images\n");
         Imax = GetMaxValVoxel(scnLabel, frames);
-        if (bloco == 0) {
+        if (bloco == 0)
+        {
             folder = nSVX;
         }
         value = getAverageColor(scnLabel, video, frames, Imax, randowColorLabels, typeOfColoring);
@@ -705,18 +795,19 @@ int main(int argc, char **argv)
                 fprintf(stderr, "Unable to create the output directories at %s", outputPath);
             }
         }
-        
+
         n = scnLabel[0]->ncols * scnLabel[0]->nrows;
         // Aqui eu altero para gravar ou não a interseção duas vezes na pasta
-        if (bloco != 0) {
+        if (bloco != 0)
+        {
             nFrame = nFrame - imgPorIntersecao;
         }
-        
+
         for (i = 0; i < frames; i++)
         {
             nFrame = nFrame + 1;
             ctmp = gft::CImage::Create(scnLabel[i]);
-            
+
             for (j = 0; j < n; j++)
             {
                 y = label_video[i]->val[j][0] % k;
@@ -724,8 +815,8 @@ int main(int argc, char **argv)
                 (ctmp->C[1])->data[j] = (int)value[1][intersection->labels[y]];
                 (ctmp->C[2])->data[j] = (int)value[2][intersection->labels[y]];
             }
-            
-            snprintf(concat_ppm, 1023, "%s/%03d/%05d.ppm", outputPath, folder, nFrame);
+
+            snprintf(concat_ppm, 1023, "%s/%03d/frame%d.ppm", outputPath, folder, nFrame);
             gft::CImage::Write(ctmp, (char *)concat_ppm);
             gft::CImage::Destroy(&ctmp);
         }
@@ -740,9 +831,8 @@ int main(int argc, char **argv)
         free(video);
         free(label_video);
         deleteIntersection(intersection);
-        
-        
-        //printf("Bloco: %d\n", bloco);
+
+        // printf("Bloco: %d\n", bloco);
 
         printf("Images saved\n\n\n");
 
@@ -753,10 +843,11 @@ int main(int argc, char **argv)
     printf("Time elapsed total video: %.3f seconds\n\n", sumTotalTime);
 
     // Liberar espaço das cores dos labels
-    for (int j = 0; j < numMaxTree; j++) {
+    for (int j = 0; j < numMaxTree; j++)
+    {
         delete[] randowColorLabels[j];
     }
     delete[] randowColorLabels;
-    
+
     return 0;
 }

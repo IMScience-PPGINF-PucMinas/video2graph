@@ -31,7 +31,9 @@ streamISF: streamISF.cpp intersection.cpp libgft
 
 run: clean streamISF
 #	./streamISF ./datasets/soccer output/soccer 5000 100 150 1 0 1 50
-	./streamISF ./datasets/girl output/girl 5000 100 100 1 0 1 50
+#	./streamISF ./datasets/girl output/girl 5000 100 100 1 0 1 50
+	./streamISF ./dataset/handwaving1 output/handwaving1 3000 30 100 1 0 1 50
+#	./streamISF ./dataset/walking5 output/walking5 3000 30 100 1 0 1 50
 
 clean:
 	make -f MakefileDisf.make clean
