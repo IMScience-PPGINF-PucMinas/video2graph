@@ -321,24 +321,37 @@ void gravarArvoresEmArquivo (Image **original, Image **intersecao, int num_rows,
 
 // GRAFO TEMPORAL
 
-int edge_n = 733;
-
-void writeGraph(const std::vector<std::vector<int>>& adjMat, const std::unordered_map<int, int>& vals, int frame, int label) {
-    std::string indicator_path = "./graph/graph_indicator.txt";
-    std::string edges_path = "./graph/A.txt";
+void writeLabel(int label) {
     std::string graph_labels_path = "./graph/graph_labels.txt";
-    std::string edge_attributes_path = "./graph/edge_attributes.txt";
-
     std::ofstream graph_labels(graph_labels_path, std::ios_base::app);
-    std::ofstream indicator(indicator_path, std::ios_base::app);
-    std::ofstream edges(edges_path, std::ios_base::app);
-    std::ofstream edge_attributes(edge_attributes_path, std::ios_base::app);
 
     graph_labels << label << "\n";
     graph_labels.close();
+}
+
+int edge_n = 0;
+
+void writeGraph(const std::vector<std::vector<int>>& adjMat, const std::unordered_map<int, int>& vals, int video, int frame) {
+    std::string indicator_path = "./graph/graph_indicator.txt";
+    std::string frame_path = "./graph/frame_indicator.txt";
+    std::string edges_path = "./graph/A.txt";
+    //std::string graph_labels_path = "./graph/graph_labels.txt";
+    std::string edge_attributes_path = "./graph/edge_attributes.txt";
+    std::string node_path = "./graph/node_labels.txt";
+
+    //std::ofstream graph_labels(graph_labels_path, std::ios_base::app);
+    std::ofstream indicator(indicator_path, std::ios_base::app);
+    std::ofstream frames(frame_path, std::ios_base::app);
+    std::ofstream edges(edges_path, std::ios_base::app);
+    std::ofstream edge_attributes(edge_attributes_path, std::ios_base::app);
+    std::ofstream node(node_path, std::ios_base::app);
+
+    //graph_labels << label << "\n";
+    //graph_labels.close();
 
     for (std::vector<int>::size_type i = 0; i < adjMat.size(); ++i) {
-        indicator << frame << "\n"; 
+        indicator << video << "\n"; 
+        frames << frame << "\n"; 
         for (std::vector<int>::size_type j = 0; j < adjMat[i].size(); ++j) {
             if (adjMat[i][j] > 0) {
                 edges << i + 1 + edge_n << ", " << j + 1 + edge_n << "\n";
@@ -348,6 +361,7 @@ void writeGraph(const std::vector<std::vector<int>>& adjMat, const std::unordere
     }
     edge_n += vals.size();
     indicator.close();
+    frames.close();
     edges.close();
     edge_attributes.close();
 }
@@ -414,11 +428,11 @@ std::pair<std::vector<std::vector<int>>, std::unordered_map<int, int>> getAdj(Im
     return {adjMat, vals};
 }
 
-void writeForOneFrame(Image **img, int rows, int cols, int frame, int label){
+void writeForOneFrame(Image **img, int rows, int cols, int video, int frame){
     std::vector<std::vector<int>> adjMat;
     std::unordered_map<int, int> vals;
     std::tie(adjMat, vals) = getAdj(img[0], rows, cols);
-    writeGraph(adjMat, vals, frame, label);
+    writeGraph(adjMat, vals, video, frame);
 }
 
 int main(int argc, char **argv)
@@ -439,8 +453,9 @@ int main(int argc, char **argv)
     gft::sImage32 **scnLabel;
     float rateStopDecrement;
 
-    int frame = 70;
-    int label = 2;
+    int num_video = 1;
+    int frame = 1;
+    int label = 1;
 
     if (argc < 7)
     {
@@ -488,6 +503,9 @@ int main(int argc, char **argv)
             }
         }
     }
+
+    num_frames -= 1;
+
     if (num_frames == 0)
     {
         fprintf(stderr, "Unable to find video frames at %s\n", filename);
@@ -564,7 +582,7 @@ int main(int argc, char **argv)
         // Concatenate Images in a video structure
         video = (Image **)malloc(frames * sizeof(Image *));
         Image **video_border = (Image **)malloc(frames * sizeof(Image *));
-        sprintf(filepath, "%s/00001.ppm", filename);
+        sprintf(filepath, "%s/frame1.ppm", filename);
         img = ReadAnyImage(filepath);
 
         int i = 0;
@@ -585,12 +603,15 @@ int main(int argc, char **argv)
             k = (nSVX - nSVXcomputed) / (quantDeBlocos - bloco);
         }
 
+        // Escreve o label da classe pra cada video
+        writeLabel(label);
+
         // Ler e armazenar as imagens do bloco atual na variavel video
         while (i < frames && imgFrames <= num_frames)
         {
             frame_id = imgFrames;
             
-            sprintf(filepath, "%s/%05d.ppm", filename, frame_id);
+            sprintf(filepath, "%s/frame%d.ppm", filename, frame_id);
             //sprintf(filepath, "%s/frame%d.ppm", filename, frame_id);
             imgD = loadImage(filepath);
 
@@ -604,7 +625,7 @@ int main(int argc, char **argv)
             graph = createGraph(video, 1, i);
             label_video = runDISF(graph, p, k, 5, 1, 1, 1, NULL, 0);
             
-            writeForOneFrame(label_video, video[i]->num_rows, video[i]->num_cols, frame, label);
+            writeForOneFrame(label_video, video[i]->num_rows, video[i]->num_cols, num_video, frame);
             frame++;
             
             free(label_video);
@@ -725,7 +746,7 @@ int main(int argc, char **argv)
                 (ctmp->C[2])->data[j] = (int)value[2][intersection->labels[y]];
             }
             
-            snprintf(concat_ppm, 1023, "%s/%03d/%05d.ppm", outputPath, folder, nFrame);
+            snprintf(concat_ppm, 1023, "%s/%03d/frame%d.ppm", outputPath, folder, nFrame);
             gft::CImage::Write(ctmp, (char *)concat_ppm);
             gft::CImage::Destroy(&ctmp);
         }

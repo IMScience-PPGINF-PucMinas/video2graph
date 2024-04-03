@@ -17,7 +17,7 @@ def ler_arquivo_pertencimento(nome_arquivo):
     return pertencimento
 
 def escrever_resultados_em_arquivo(resultados):
-    with open("./graph/node_labels.txt", "w") as arquivo:
+    with open("./graph/node_labels.txt", "a") as arquivo:
         if resultados:
             for par in resultados:
                 for elemento in par:
@@ -46,28 +46,29 @@ def comparar_arestas_proximas(arquivo_grafo, arquivo_pertencimento):
     for no, vizinhos in grafo.items():
         nos_escolhidos = set()
         grafo_atual = pertencimento.get(no, 0)
-        for outro_no, outro_vizinhos in grafo.items():
-            outro_grafo = pertencimento.get(outro_no, 0)
-            if outro_grafo == grafo_atual + 1:
-                arestas = len(vizinhos)
-                outro_arestas = len(outro_vizinhos)
-                a = arestas - outro_arestas
-                b = outro_arestas - arestas
-                c = a if (a >= b) else b
-                if (c <= m):
-                    if (no in nos_escolhidos) or (outro_no in outro_nos_escolhidos):
-                        continue
-                    else:
-                        nos_escolhidos.add(no)
-                        outro_nos_escolhidos.add(outro_no)
-                        resultados.append((grafo_atual, no, outro_grafo, outro_no))
-                        escrever_pares_em_arquivo(no, outro_no)
-                        escrever_tempo_em_arquivo(grafo_atual)
-        if (no not in nos_escolhidos):
-            resultados.append((grafo_atual, no))
+        if no >= 1:
+            for outro_no, outro_vizinhos in grafo.items():
+                outro_grafo = pertencimento.get(outro_no, 0)
+                if outro_grafo == grafo_atual + 1:
+                    arestas = len(vizinhos)
+                    outro_arestas = len(outro_vizinhos)
+                    a = arestas - outro_arestas
+                    b = outro_arestas - arestas
+                    c = a if (a >= b) else b
+                    if (c <= m):
+                        if (no in nos_escolhidos) or (outro_no in outro_nos_escolhidos):
+                            continue
+                        else:
+                            nos_escolhidos.add(no)
+                            outro_nos_escolhidos.add(outro_no)
+                            resultados.append((grafo_atual, no, outro_grafo, outro_no))
+                            escrever_pares_em_arquivo(no, outro_no)
+                            escrever_tempo_em_arquivo(grafo_atual)
+            if (no not in nos_escolhidos):
+                resultados.append((grafo_atual, no))
 
     return resultados
 
 
-resultados = comparar_arestas_proximas("./graph/A.txt", "./graph/graph_indicator.txt")
+resultados = comparar_arestas_proximas("./graph/A.txt", "./graph/frame_indicator.txt")
 escrever_resultados_em_arquivo(resultados)
