@@ -1,9 +1,9 @@
-#include "/home/larissa/Downloads/video/disf/include/DISF.h"
-#include "/home/larissa/Downloads/video/disf/include/Color.h"
-#include "/home/larissa/Downloads/video/disf/include/Image.h"
-#include "/home/larissa/Downloads/video/disf/include/IntList.h"
-#include "/home/larissa/Downloads/video/disf/include/PrioQueue.h"
-#include "/home/larissa/Downloads/video/disf/include/Utils.h"
+#include "DISF.h"
+#include "Color.h"
+#include "Image.h"
+#include "IntList.h"
+#include "PrioQueue.h"
+#include "Utils.h"
 #include <math.h>
 
 //=============================================================================
@@ -105,7 +105,7 @@ double *computeGradient(Graph *graph)
     NodeAdj *adj_rel;
 
     grad = (double *)calloc(graph->num_nodes, sizeof(double));
-    //adj_rel = create8NeighAdj();
+    // adj_rel = create8NeighAdj();
     adj_rel = create6NeighAdj();
 
     max_adj_dist = sqrtf(2); // Diagonal distance for 8-neighborhood
@@ -179,8 +179,8 @@ double *computeGradient(Graph *graph)
             video[f]->val[i][0] = (int)grad[k];
             k++;
         }
-        //writeImagePGM(video[f], concat_label);
-        //freeImage(&video[f]);
+        // writeImagePGM(video[f], concat_label);
+        // freeImage(&video[f]);
     }
 
     free(dist_weight);
@@ -258,7 +258,7 @@ NodeAdj *create6NeighAdj()
     adj_rel->dx = (int *)calloc(6, sizeof(int));
     adj_rel->dy = (int *)calloc(6, sizeof(int));
     adj_rel->dz = (int *)calloc(6, sizeof(int));
-    //Pixel frame =================================================================
+    // Pixel frame =================================================================
     adj_rel->dx[0] = -1;
     adj_rel->dy[0] = 0;
     adj_rel->dz[0] = 0; // Left
@@ -272,11 +272,11 @@ NodeAdj *create6NeighAdj()
     adj_rel->dx[3] = 0;
     adj_rel->dy[3] = 1;
     adj_rel->dz[0] = 0; // Bottom
-                        //Previous frame ==============================================================
+                        // Previous frame ==============================================================
     adj_rel->dx[4] = 0;
     adj_rel->dy[4] = 0;
     adj_rel->dz[4] = -1; // Center-back
-                         //Posterior frame ==============================================================
+                         // Posterior frame ==============================================================
     adj_rel->dx[5] = 0;
     adj_rel->dy[5] = 0;
     adj_rel->dz[5] = 1; // Center-front
@@ -294,7 +294,7 @@ NodeAdj *create18NeighAdj()
     adj_rel->dx = (int *)calloc(18, sizeof(int));
     adj_rel->dy = (int *)calloc(18, sizeof(int));
     adj_rel->dz = (int *)calloc(18, sizeof(int));
-    //Pixel frame =================================================================
+    // Pixel frame =================================================================
     adj_rel->dx[0] = -1;
     adj_rel->dy[0] = 0;
     adj_rel->dz[0] = 0; // Center-Left
@@ -323,7 +323,7 @@ NodeAdj *create18NeighAdj()
     adj_rel->dy[7] = 1;
     adj_rel->dz[7] = 0; // Bottom-Right
 
-    //Previous frame ==============================================================
+    // Previous frame ==============================================================
     adj_rel->dx[8] = -1;
     adj_rel->dy[8] = 0;
     adj_rel->dz[8] = -1; // Center-Left
@@ -342,7 +342,7 @@ NodeAdj *create18NeighAdj()
     adj_rel->dy[12] = 0;
     adj_rel->dz[12] = -1; // Center-back
 
-    //Posterior frame ==============================================================
+    // Posterior frame ==============================================================
     adj_rel->dx[13] = -1;
     adj_rel->dy[13] = 0;
     adj_rel->dz[13] = 1; // Center-Left
@@ -374,7 +374,7 @@ NodeAdj *create26NeighAdj()
     adj_rel->dx = (int *)calloc(26, sizeof(int));
     adj_rel->dy = (int *)calloc(26, sizeof(int));
     adj_rel->dz = (int *)calloc(26, sizeof(int));
-    //Pixel frame =================================================================
+    // Pixel frame =================================================================
     adj_rel->dx[0] = -1;
     adj_rel->dy[0] = 0;
     adj_rel->dz[0] = 0; // Center-Left
@@ -403,7 +403,7 @@ NodeAdj *create26NeighAdj()
     adj_rel->dy[7] = 1;
     adj_rel->dz[7] = 0; // Bottom-Right
 
-    //Previous frame ==============================================================
+    // Previous frame ==============================================================
     adj_rel->dx[8] = -1;
     adj_rel->dy[8] = 0;
     adj_rel->dz[8] = -1; // Center-Left
@@ -436,7 +436,7 @@ NodeAdj *create26NeighAdj()
     adj_rel->dy[16] = 0;
     adj_rel->dz[16] = -1; // Center-back
 
-    //Posterior frame ==============================================================
+    // Posterior frame ==============================================================
     adj_rel->dx[17] = -1;
     adj_rel->dy[17] = 0;
     adj_rel->dz[17] = 1; // Center-Left
@@ -476,7 +476,7 @@ NodeAdj *create26NeighAdj()
 //=============================================================================
 Graph *createGraph(Image **video, int num_frames, int start_frame)
 {
-    //printf("========Creating Graph from video========\n");
+    // printf("========Creating Graph from video========\n");
     int normval;
     Graph *graph;
     Image *img = video[start_frame]; // first frame
@@ -489,10 +489,10 @@ Graph *createGraph(Image **video, int num_frames, int start_frame)
     graph->num_feats = 3; // L*a*b cspace
     graph->num_nodes = img->num_pixels * num_frames;
 
-    //printf("Graph information ---\n");
-    //printf("cols:%d row:%d\n", graph->num_cols, graph->num_rows);
-    //printf("frames:%d nodes:%d\n", graph->num_frames, graph->num_nodes);
-    //printf("feats:%d\n", graph->num_feats);
+    // printf("Graph information ---\n");
+    // printf("cols:%d row:%d\n", graph->num_cols, graph->num_rows);
+    // printf("frames:%d nodes:%d\n", graph->num_frames, graph->num_nodes);
+    // printf("feats:%d\n", graph->num_feats);
 
     graph->feats = (float **)calloc(graph->num_nodes, sizeof(float *));
     int count = 0;
@@ -509,7 +509,7 @@ Graph *createGraph(Image **video, int num_frames, int start_frame)
             count++;
         }
     }
-    //printf("Final count index :%d\n", count);
+    // printf("Final count index :%d\n", count);
     return graph;
 }
 
@@ -536,7 +536,7 @@ Tree *createTree(int root_index, int num_feats)
 //=============================================================================
 Image **runDISF(Graph *graph, int n_0, int n_f, int adj_op, int sampl_op, int path_op, int rem_op, Image ***border_vid, int initial_label)
 {
-    //printf("========Running DISF Algorithm========\n");
+    // printf("========Running DISF Algorithm========\n");
     bool want_borders;
     int num_rem_seeds, iter;
     int *pred_map, *rnd_indexes;
@@ -544,7 +544,7 @@ Image **runDISF(Graph *graph, int n_0, int n_f, int adj_op, int sampl_op, int pa
     NodeAdj *adj_rel;
     IntList *seed_set;
     int num_pixels = graph->num_cols * graph->num_rows;
-    //Image *label_img;
+    // Image *label_img;
     Image **label_video;
     PrioQueue *queue;
     NodeCoords coords;
@@ -564,7 +564,7 @@ Image **runDISF(Graph *graph, int n_0, int n_f, int adj_op, int sampl_op, int pa
     else
         adj_rel = create26NeighAdj();
 
-    //label_img = createImage(graph->num_rows, graph->num_cols, 1);
+    // label_img = createImage(graph->num_rows, graph->num_cols, 1);
     label_video = createVideo(graph->num_rows, graph->num_cols, 1, graph->num_frames);
     queue = createPrioQueue(graph->num_nodes, cost_map, MINVAL_POLICY);
 
@@ -581,8 +581,8 @@ Image **runDISF(Graph *graph, int n_0, int n_f, int adj_op, int sampl_op, int pa
     else
         seed_set = gridSampling(graph, n_0);
 
-    //printf("NUM SEEDS: %d\n", seed_set->size);
-    //printf("n_0: %d\n", n_0);
+    // printf("NUM SEEDS: %d\n", seed_set->size);
+    // printf("n_0: %d\n", n_0);
 
     iter = 1; // Pelo menos uma única iteração é executada
     do
@@ -599,8 +599,8 @@ Image **runDISF(Graph *graph, int n_0, int n_f, int adj_op, int sampl_op, int pa
 
         // #pragma omp parallel for
         int c = 0;
-        //printf("Numero de frames no for do DISF: %d\n", graph->num_frames);
-        //printf("number of pixels %d\n", num_pixels );
+        // printf("Numero de frames no for do DISF: %d\n", graph->num_frames);
+        // printf("number of pixels %d\n", num_pixels );
         for (int f = 0; f < graph->num_frames; f++)
         {
             for (int i = 0; i < num_pixels; i++)
@@ -615,23 +615,23 @@ Image **runDISF(Graph *graph, int n_0, int n_f, int adj_op, int sampl_op, int pa
                     (*border_vid)[f]->val[i][0] = 0;
             }
         }
-        //printf("Values Assigned for all nodes------>\n");
-        //for(int f = 0; f < graph->num_frames; f++){
-        // Atribuir valores iniciais para todas as sementes amostradas
-        // DANI - Cada semente da grid é uma árvore, pois recebe um seed_label diferente
+        // printf("Values Assigned for all nodes------>\n");
+        // for(int f = 0; f < graph->num_frames; f++){
+        //  Atribuir valores iniciais para todas as sementes amostradas
+        //  DANI - Cada semente da grid é uma árvore, pois recebe um seed_label diferente
         seed_label = initial_label;
-        //printf("-------------seed_label: %d\n", seed_label);
+        // printf("-------------seed_label: %d\n", seed_label);
 
         for (IntCell *ptr = seed_set->head; ptr != NULL; ptr = ptr->next)
         {
-            //printf("To aqui 1,5\n");
+            // printf("To aqui 1,5\n");
             int seed_index;
 
             seed_index = ptr->elem;
             coords = getNodeCoords(graph, seed_index);
             sedex = (coords.y * graph->num_cols + coords.x);
 
-            //printf("Seed Index = %d, z coord= %d\n", seed_index, coords.z);
+            // printf("Seed Index = %d, z coord= %d\n", seed_index, coords.z);
             cost_map[seed_index] = 0;
             label_video[coords.z]->val[sedex][0] = seed_label;
 
@@ -643,10 +643,10 @@ Image **runDISF(Graph *graph, int n_0, int n_f, int adj_op, int sampl_op, int pa
             insertPrioQueue(&queue, seed_index);
         }
         //}
-        //printf("Values Assigned for all seed sampled <------\n");
+        // printf("Values Assigned for all seed sampled <------\n");
 
-        //for(int f = 0; f < graph->num_frames; f++){
-        // Para cada nó dentro da fila
+        // for(int f = 0; f < graph->num_frames; f++){
+        //  Para cada nó dentro da fila
         while (!isPrioQueueEmpty(queue))
         {
             int nodex, node_index, node_label, addex, root_index;
@@ -680,7 +680,7 @@ Image **runDISF(Graph *graph, int n_0, int n_f, int adj_op, int sampl_op, int pa
                     int adj_index, adj_label;
 
                     adj_index = getNodeIndex(graph, adj_coords);
-                    //printf("ADJ index = %d\n", adj_index );
+                    // printf("ADJ index = %d\n", adj_index );
 
                     A_coord = getNodeCoords(graph, adj_index);
                     addex = (A_coord.y * graph->num_cols + A_coord.x);
@@ -700,7 +700,7 @@ Image **runDISF(Graph *graph, int n_0, int n_f, int adj_op, int sampl_op, int pa
                         {
                             arc_cost = euclDistance(mean_feat_tree, graph->feats[adj_index], graph->num_feats);
                         }
-                        //printf("arc_cost: %d\n", arc_cost);
+                        // printf("arc_cost: %d\n", arc_cost);
 
                         path_cost = MAX(cost_map[node_index], arc_cost);
 
@@ -723,7 +723,7 @@ Image **runDISF(Graph *graph, int n_0, int n_f, int adj_op, int sampl_op, int pa
 
                         if (want_borders) // Both depicts a border between their superpixels
                         {
-                            //printf("Want border = %d\n", want_borders );
+                            // printf("Want border = %d\n", want_borders );
                             (*border_vid)[A_coord.z]->val[nodex][0] = 255;
                             (*border_vid)[A_coord.z]->val[addex][0] = 255;
                         }
@@ -775,11 +775,11 @@ Image **runDISF(Graph *graph, int n_0, int n_f, int adj_op, int sampl_op, int pa
         iter++;
         resetPrioQueue(&queue); // Clear the queue
 
-        //printf("Queue processedf \n");
+        // printf("Queue processedf \n");
         //
     } while (num_rem_seeds > 0);
 
-    //printf("Number of Iterations: %d\n", iter);
+    // printf("Number of Iterations: %d\n", iter);
 
     return label_video;
 }
@@ -789,7 +789,7 @@ Image **runDISF(Graph *graph, int n_0, int n_f, int adj_op, int sampl_op, int pa
 //=============================================================================
 IntList *gridSampling(Graph *graph, int num_seeds)
 {
-    //printf("Creating grid ------>\n");
+    // printf("Creating grid ------>\n");
     float size, stride, delta_x, delta_y, delta_z;
     double *grad;
     bool *is_seed;
@@ -799,15 +799,15 @@ IntList *gridSampling(Graph *graph, int num_seeds)
 
     seed_set = createIntList();
     is_seed = (bool *)calloc(graph->num_nodes, sizeof(bool));
-    //printf("gridSampling graph->num_nodes: %d\n", graph->num_nodes);
-    // Compute the approximate superpixel size and stride
+    // printf("gridSampling graph->num_nodes: %d\n", graph->num_nodes);
+    //  Compute the approximate superpixel size and stride
     size = 0.5 + (float)(graph->num_nodes / (float)num_seeds);
     stride = pow(size, 1.0 / 3) + 0.5;
-    //printf("stride gridSampling: %lf\n", stride);
+    // printf("stride gridSampling: %lf\n", stride);
 
     delta_x = delta_y = delta_z = stride / 2.0;
-    //printf("delta_z gridSampling: %lf\n", delta_z);
-    //printf("delta x %f, y %f, z %f\n", delta_x, delta_y, delta_z );
+    // printf("delta_z gridSampling: %lf\n", delta_z);
+    // printf("delta x %f, y %f, z %f\n", delta_x, delta_y, delta_z );
 
     if (delta_x < 1.0 || delta_y < 1.0 || delta_z < 1.0)
         printError("gridSampling", "The number of samples is too high");
@@ -818,7 +818,7 @@ IntList *gridSampling(Graph *graph, int num_seeds)
     // Iterate through the nodes coordinates
     for (int z = (int)delta_z; z < graph->num_frames; z += stride)
     {
-        //printf("Entrei no for do gridSampling\n");
+        // printf("Entrei no for do gridSampling\n");
         for (int y = (int)delta_y; y < graph->num_rows; y += stride)
         {
             for (int x = (int)delta_x; x < graph->num_cols; x += stride)
@@ -871,7 +871,7 @@ IntList *gridSampling(Graph *graph, int num_seeds)
         {
             if (is_seed[k])
             {
-                //printf("Entrei no if (is_seed[k])\n");
+                // printf("Entrei no if (is_seed[k])\n");
                 insertIntListTail(&seed_set, k);
                 video[f]->val[i][0] = 255;
             }
@@ -881,7 +881,7 @@ IntList *gridSampling(Graph *graph, int num_seeds)
         //  freeImage(&video[f]);
     }
 
-    //printf("Finished grid <------\n");
+    // printf("Finished grid <------\n");
 
     free(grad);
     free(is_seed);

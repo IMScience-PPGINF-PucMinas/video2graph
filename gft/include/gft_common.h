@@ -16,7 +16,6 @@ extern "C"
 #include <float.h>
 #include <sys/time.h>
 #include <time.h>
-#include <omp.h>
 
 #include <xmmintrin.h>
 }
@@ -207,6 +206,6 @@ namespace gft
                        int omin, int omax,
                        int nmin, int nmax);
 
-} //end gft namespace
+} // end gft namespace
 
 #endif
