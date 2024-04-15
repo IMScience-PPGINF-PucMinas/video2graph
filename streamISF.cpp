@@ -1,4 +1,3 @@
-
 #include "gft.h"
 #include "intersection.hpp"
 
@@ -16,6 +15,7 @@
 #include "Utils.h"
 
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <random>
 
@@ -84,30 +84,38 @@ float **Liberar_matriz(int m, int n, float **v)
         printf("** Erro: Parametro invalido**\n");
         return (v);
     }
-    for (i = 0; i < m; i++) {
-        if (v[i] != NULL) {
+    for (i = 0; i < m; i++)
+    {
+        if (v[i] != NULL)
+        {
             free(v[i]); /* libera as linhas da matriz */
             v[i] = NULL;
         }
     }
-        
-    free(v);        /* libera a matriz */
-    return (NULL);  /* retorna um ponteiro nulo */
+
+    free(v);       /* libera a matriz */
+    return (NULL); /* retorna um ponteiro nulo */
 }
 
-void Liberar_Video(Image **video, int frames, int num_pixels) {
+void Liberar_Video(Image **video, int frames, int num_pixels)
+{
 
-    for(int j = 0; j < frames; j++) {
+    for (int j = 0; j < frames; j++)
+    {
 
-        for (int i = 0; i < num_pixels; i++) {
-            if (video[j]->val[i]) {
+        for (int i = 0; i < num_pixels; i++)
+        {
+            if (video[j]->val[i])
+            {
                 free(video[j]->val[i]);
             }
         }
-        if (video[j]->val) {
+        if (video[j]->val)
+        {
             free(video[j]->val);
         }
-        if (video[j]) {
+        if (video[j])
+        {
             free(video[j]);
         }
     }
@@ -129,7 +137,7 @@ int GetMaxValVoxel(gft::sImage32 **scnLabel, int num_frames)
     return (max);
 }
 
-float **getAverageColor(gft::sImage32 **scnLabel, Image **video, int num_frames, int Imax, int** randowColorLabels, int typeOfColoring)
+float **getAverageColor(gft::sImage32 **scnLabel, Image **video, int num_frames, int Imax, int **randowColorLabels, int typeOfColoring)
 {
     int nnodes, i, k, l, n;
     // float *value[3];
@@ -148,180 +156,144 @@ float **getAverageColor(gft::sImage32 **scnLabel, Image **video, int num_frames,
         printf("Error\n");
         exit(1);
     }
-    
-    //printf("num_frames: %d\n", num_frames);
-    for (i = 0; i < n; i++) {
+
+    // printf("num_frames: %d\n", num_frames);
+    for (i = 0; i < n; i++)
+    {
         for (k = 0; k < num_frames; k++)
         {
             l = scnLabel[k]->data[i];
-            size[l] += 1;            
+            size[l] += 1;
             value[0][l] += video[k]->val[i][0];
             value[1][l] += video[k]->val[i][1];
             value[2][l] += video[k]->val[i][2];
         }
     }
-    //printf("nnodes: %d   -  n: %d    -    Imax: %d\n", nnodes, n, Imax);
+    // printf("nnodes: %d   -  n: %d    -    Imax: %d\n", nnodes, n, Imax);
 
     for (l = 0; l < nnodes; l++)
     {
         if (size[l] > 0)
         {
-            if (randowColorLabels[l][0] == -1) {
+            if (randowColorLabels[l][0] == -1)
+            {
                 randowColorLabels[l][0] = dis(gen);
                 randowColorLabels[l][1] = dis(gen);
                 randowColorLabels[l][2] = dis(gen);
             }
 
-            if (typeOfColoring == 0) {
+            if (typeOfColoring == 0)
+            {
                 value[0][l] /= size[l];
                 value[1][l] /= size[l];
                 value[2][l] /= size[l];
-            } else {
+            }
+            else
+            {
                 value[0][l] = randowColorLabels[l][0];
                 value[1][l] = randowColorLabels[l][1];
                 value[2][l] = randowColorLabels[l][2];
             }
-        } //else {
-            //printf("Empty regions in RAG: %d  -  l: %d\n", size[l], l);
+        } // else {
+          // printf("Empty regions in RAG: %d  -  l: %d\n", size[l], l);
         //}
     }
-    //gft::FreeIntArray(&size);
-    
+    // gft::FreeIntArray(&size);
+
     return value;
 }
 
-int computedSupervoxelsVideo (int** randowColorLabels, int nSVX) {
+int computedSupervoxelsVideo(int **randowColorLabels, int nSVX)
+{
     int nSupervoxelsVideo = 0;
 
-    for (int i = 0; i < nSVX; i++) {
-        if (randowColorLabels[i][0] != -1) {
+    for (int i = 0; i < nSVX; i++)
+    {
+        if (randowColorLabels[i][0] != -1)
+        {
             nSupervoxelsVideo++;
         }
     }
-    
+
     return nSupervoxelsVideo;
-}
-
-Image **copyTreeIntersection(Image **original, Image **intersecao, int nImagesIntersecao, int num_rows, int num_cols, int num_frames, Intersection* intersection)
-{
-    int num_pixels = num_cols * num_rows;
-    int nframeOriginal = 0;
-    int position = -1;
-    
-    // Reservo espaco na memoria para vetor com as imagens da intersecao
-    intersecao = (Image **)malloc(nImagesIntersecao * sizeof(Image *));
-    
-    // Reservar espaço na memoria para cada imagem da intersecao
-    for (int f = 0; f < nImagesIntersecao; f++)
-    {
-        intersecao[f] = createImage(num_rows, num_cols, 1);
-    }
-
-    // Copiar label das arvores da intersecao do bloco anterior
-    for (int f = 0; f < nImagesIntersecao; f++)
-    {
-        // Copiar apenas os frames que desejo copiar o label no final do grafo original
-        nframeOriginal = num_frames - nImagesIntersecao + f;
-        for (int i = 0; i < num_pixels; i++)
-        {
-            position = original[nframeOriginal]->val[i][0] % intersection->amountLabels;
-            intersecao[f]->val[i][0] = intersection->labels[position];
-        }
-    }
-    return intersecao;
-}
-
-void Liberar_Intersection(Image **intersecao, int nImagesIntersecao, int num_pixels) {
-
-    if (intersecao != nullptr) {
-        for(int j = 0; j < nImagesIntersecao; j++) {
-
-            for (int i = 0; i < num_pixels; i++) {
-                if (intersecao[j]->val[i] != nullptr) {
-                    free(intersecao[j]->val[i]);
-                }
-            }
-            if (intersecao[j]->val != nullptr) {
-                free(intersecao[j]->val);
-            }
-            if (intersecao[j] != nullptr) {
-                free(intersecao[j]);
-            }
-        }
-        free(intersecao);
-    }
-}
-
-void printIntersecao (Image **intersecao, int nImagesIntersecao, int num_rows, int num_cols) {
-    int num_pixels = num_cols * num_rows;
-    if (intersecao) {
-        for (int f = 0; f < nImagesIntersecao; f++)
-        {
-            for (int i = 0; i < num_pixels; i++)
-            {
-                printf("val = %d \t - ", intersecao[f]->val[i][0]);
-            }
-        }
-    } 
-}
-
-void gravarArvoresEmArquivo (Image **original, Image **intersecao, int num_rows, int num_cols, int num_frames, int nImagesIntersecao, std::string fileNameBloco, std::string fileNameIntersecao, std::string debug, int bloco, Intersection* intersection) {
-    int num_pixels = num_cols * num_rows;
-    int aux = 1;
-    int positionLabel = -1;
-    std::ofstream intersecaoFile(fileNameIntersecao, std::ios::app);
-
-    intersecaoFile << debug << " - bloco: " << bloco << "\n";
-    if (intersecao) {
-        for (int f = 0; f < nImagesIntersecao; f++)
-        {
-            aux = 1;
-            for (int i = 0; i < num_pixels; i++)
-            {
-                if (intersecao[f]->val[i][0] < 10) {
-                    intersecaoFile << intersecao[f]->val[i][0] << "  ";
-                } else {
-                    intersecaoFile << intersecao[f]->val[i][0] << " ";
-                }
-                
-                if ((aux % num_rows) == 0) {
-                    intersecaoFile << "\n";
-                }
-                aux++;
-            }
-            intersecaoFile << "\n";
-        }
-    }
-	intersecaoFile.close();
-    
-    std::ofstream originalFile(fileNameBloco, std::ios::app);
-
-    originalFile << debug << " - bloco: " << bloco << "\n";
-    for (int f = 0; f < num_frames; f++)
-    {
-        aux = 1;
-        for (int i = 0; i < num_pixels; i++)
-        {
-            positionLabel = original[f]->val[i][0] % intersection->amountLabels;
-            if (intersection->labels[positionLabel] < 10) {
-                originalFile << intersection->labels[positionLabel] << "  ";
-            } else {
-                originalFile << intersection->labels[positionLabel] << " ";
-            }
-
-            if ((aux % num_rows) == 0) {
-                originalFile << "\n";
-            }
-            aux++;
-        }
-        originalFile << "\n";
-    }
-    originalFile.close();
 }
 
 // GRAFO TEMPORAL
 
-void writeLabel(int label) {
+int getLatestEdgeValue() {
+    std::string edges_path = "./graph/A.txt";
+    std::ifstream edges_file(edges_path);
+
+    int edge_value = 0;
+
+    std::string penultimate_line;
+    std::string latest_line;
+    while (std::getline(edges_file, latest_line)) {
+        if (!latest_line.empty()) {
+            penultimate_line = latest_line;
+        }
+    }
+
+    edges_file.close();
+
+    std::stringstream ss(penultimate_line);
+    std::string edge_value_str;
+    std::getline(ss, edge_value_str, ',');
+    try{
+        edge_value = std::stoi(edge_value_str);
+    }
+    catch (const std::invalid_argument& e){
+        edge_value = 0;
+    }
+
+    return edge_value;
+
+}
+
+int getLatestFrameIndicator() {
+    std::string frame_indicator_path = "./graph/frame_indicator.txt";
+
+    std::ifstream frame_indicator_file(frame_indicator_path);
+
+    if (!frame_indicator_file.is_open()) {
+        return 1;
+    }
+
+    int latest_frame = 0;
+    std::string line;
+
+    while (std::getline(frame_indicator_file, line)) {
+        latest_frame = std::stoi(line);
+    }
+
+    frame_indicator_file.close();
+
+    return latest_frame + 1;
+}
+
+int getLatestGraphIndicator() {
+    std::string graph_indicator_path = "./graph/graph_indicator.txt";
+
+    std::ifstream graph_indicator_file(graph_indicator_path);
+
+    if (!graph_indicator_file.is_open()) {
+        return 1;
+    }
+
+    int latest_graph = 0;
+    std::string line;
+
+    while (std::getline(graph_indicator_file, line)) {
+        latest_graph = std::stoi(line);
+    }
+
+    graph_indicator_file.close();
+
+    return latest_graph + 1;
+}
+
+void writeLabel(int label)
+{
     std::string graph_labels_path = "./graph/graph_labels.txt";
     std::ofstream graph_labels(graph_labels_path, std::ios_base::app);
 
@@ -329,31 +301,28 @@ void writeLabel(int label) {
     graph_labels.close();
 }
 
-int edge_n = 0;
-
-void writeGraph(const std::vector<std::vector<int>>& adjMat, const std::unordered_map<int, int>& vals, int video, int frame) {
+void writeGraph(const std::vector<std::vector<int>> &adjMat, const std::unordered_map<int, int> &vals, int edge_n, int frame, int video)
+{
     std::string indicator_path = "./graph/graph_indicator.txt";
     std::string frame_path = "./graph/frame_indicator.txt";
     std::string edges_path = "./graph/A.txt";
-    //std::string graph_labels_path = "./graph/graph_labels.txt";
     std::string edge_attributes_path = "./graph/edge_attributes.txt";
     std::string node_path = "./graph/node_labels.txt";
 
-    //std::ofstream graph_labels(graph_labels_path, std::ios_base::app);
     std::ofstream indicator(indicator_path, std::ios_base::app);
     std::ofstream frames(frame_path, std::ios_base::app);
     std::ofstream edges(edges_path, std::ios_base::app);
     std::ofstream edge_attributes(edge_attributes_path, std::ios_base::app);
     std::ofstream node(node_path, std::ios_base::app);
 
-    //graph_labels << label << "\n";
-    //graph_labels.close();
-
-    for (std::vector<int>::size_type i = 0; i < adjMat.size(); ++i) {
-        indicator << video << "\n"; 
-        frames << frame << "\n"; 
-        for (std::vector<int>::size_type j = 0; j < adjMat[i].size(); ++j) {
-            if (adjMat[i][j] > 0) {
+    for (std::vector<int>::size_type i = 0; i < adjMat.size(); ++i)
+    {
+        indicator << video << "\n";
+        frames << frame << "\n";
+        for (std::vector<int>::size_type j = 0; j < adjMat[i].size(); ++j)
+        {
+            if (adjMat[i][j] > 0)
+            {
                 edges << i + 1 + edge_n << ", " << j + 1 + edge_n << "\n";
                 edge_attributes << 0 << "\n";
             }
@@ -428,11 +397,14 @@ std::pair<std::vector<std::vector<int>>, std::unordered_map<int, int>> getAdj(Im
     return {adjMat, vals};
 }
 
-void writeForOneFrame(Image **img, int rows, int cols, int video, int frame){
+void writeForOneFrame(Image **img, int rows, int cols, int video)
+{
     std::vector<std::vector<int>> adjMat;
     std::unordered_map<int, int> vals;
     std::tie(adjMat, vals) = getAdj(img[0], rows, cols);
-    writeGraph(adjMat, vals, video, frame);
+    int edge_n = getLatestEdgeValue();
+    int frame = getLatestFrameIndicator();
+    writeGraph(adjMat, vals, edge_n, frame, video);
 }
 
 int main(int argc, char **argv)
@@ -452,10 +424,9 @@ int main(int argc, char **argv)
     char concat_ppm[2048];
     gft::sImage32 **scnLabel;
     float rateStopDecrement;
+    int label = 0;
 
-    int num_video = 1;
-    int frame = 1;
-    int label = 1;
+    int num_video = getLatestGraphIndicator();
 
     if (argc < 7)
     {
@@ -470,21 +441,23 @@ int main(int argc, char **argv)
         fprintf(stdout, "\t typeOfColoring....... Coloring type when saving segmented image. 0: Medium color - 1: Random color\n");
         fprintf(stdout, "\t propagatedMoreLabels....... Do tree merges, 1 if yes, 0 if no\n");
         fprintf(stdout, "\t rateStopDecrement....... Rate to stop supervoxel decrement. Ex.: 10, will be 0.10 of the number of supervoxels\n");
-
+        // ./streamISF ./dataset/testePPM output/testePPM 15 4 3 1 0 1 50
         exit(0);
     }
 
     // Guardar dados de argv em suas variáveis correspondentes
     strcpy(filename, argv[1]);
-    strcpy(outputPath, argv[2]);
-    p = atoi(argv[3]);
-    nSVX = atoi(argv[4]);
-    imgPorBloco = atoi(argv[5]);
-    imgPorIntersecao = atoi(argv[6]);
-    typeOfColoring = atoi(argv[7]);
-    propagatedMoreLabels = atoi(argv[8]);
-    rateStopDecrement = (float) atoi(argv[9]) / 100.0;
+    //strcpy(outputPath, argv[2]);
+    p = atoi(argv[2]);
+    nSVX = atoi(argv[3]);
+    imgPorBloco = atoi(argv[4]);
+    imgPorIntersecao = atoi(argv[5]);
+    typeOfColoring = atoi(argv[6]);
+    propagatedMoreLabels = atoi(argv[7]);
+    rateStopDecrement = (float)atoi(argv[8]) / 100.0;
+    label = atoi(argv[9]);
 
+    
     nSVXcomputed = 0, k = 0;
 
     // Verificar se as imagens lidas possuem extensão .ppm e contabilizar o número de frames na pasta
@@ -625,8 +598,7 @@ int main(int argc, char **argv)
             graph = createGraph(video, 1, i);
             label_video = runDISF(graph, p, k, 5, 1, 1, 1, NULL, 0);
             
-            writeForOneFrame(label_video, video[i]->num_rows, video[i]->num_cols, num_video, frame);
-            frame++;
+            writeForOneFrame(label_video, video[i]->num_rows, video[i]->num_cols, num_video);
             
             free(label_video);
 
@@ -634,150 +606,8 @@ int main(int argc, char **argv)
             imgFrames++;
 
         }
-        num_pixels = video[0]->num_rows * video[0]->num_cols;
-        graph = createGraph(video, frames, 0);
-        
-        //printf("passou do for\n");
 
-        intersection = newIntersection(k);
-
-        /*========================================================*/
-        /*  Compute SUPERVOXEL          */
-        /*========================================================*/
-        start = clock(); //
-        label_video = runDISF(graph, p, k, 5, 1, 1, 1, NULL, 0);
-        
-        
-        //printLabels(intersection);
-        //gravarArvoresEmArquivo (label_video, intersecao, graph->num_rows, graph->num_cols, frames, imgPorIntersecao, "original.txt", "intersecao.txt", "\n----------------label_video", bloco, intersection);
-
-        if (bloco != 0) {
-            // Alterar valores de label para que seja maior que o maior número de label do bloco anterior
-            changeLabelValue(initial_label, intersection);
-            //printLabels(intersection);
-
-            //gravarArvoresEmArquivo (label_video, intersecao, graph->num_rows, graph->num_cols, frames, imgPorIntersecao, "original.txt", "intersecao.txt", "\n----------------após alteração de valor do label", bloco, intersection);
-
-            // Preencher informações de posição de labels para conseguir propagar as árvores da insterseção
-            insertIntersection (intersecao, label_video, num_pixels, intersection);
-
-            // Propagar árvores da interseção do bloco anterior para o próximo bloco
-            propagateIntersectingTrees (intersection, intersecao, propagatedMoreLabels);
-            //gravarArvoresEmArquivo (label_video, intersecao, graph->num_rows, graph->num_cols, frames, imgPorIntersecao, "original.txt", "intersecao.txt", "\n----------------após propagacao", bloco, intersection);
-        }
-
-        // Pegar o maior label para o próximo bloco
-        initial_label = getMaxNumLabel(intersection) + 1;
-
-        // Liberar memória da interseção, antes de alocar novamente
-        if (intersecao != NULL) {
-            Liberar_Intersection(intersecao, imgPorIntersecao, num_pixels);
-        }
-
-        // Cópia das últimas imagens do bloco atual que serão a interseção entre este bloco e o próximo
-        intersecao = copyTreeIntersection(label_video, intersecao, imgPorIntersecao, graph->num_rows, graph->num_cols, frames, intersection);
-
-        end = clock();
-        totaltime = ((double)(end - start)) / CLOCKS_PER_SEC;
-        sumTotalTime = sumTotalTime + totaltime;
-        //printf("Time elapsed block %d: %.3f seconds\n", bloco, totaltime);
-        /*========================================================*/
-
-        if (label_video != NULL)
-        {
-            printf("Loaded Labels --> %s  - bloco: %d\n", filename, (bloco + 1));
-        }        
-
-        // Aqui reserva espaço na memória para guardar as imagens de saída segmentadas
-        j = 0;
-        scnLabel = new gft::sImage32*[frames];
-        for (z = 0; z < frames; z++)
-        {
-            scnLabel[z] = gft::Image32::Create(img);
-        }
-
-        for (z = 0; z < frames; z++)
-        {
-            for (x = 0; x < scnLabel[z]->ncols; x++)
-                for (y = 0; y < scnLabel[z]->nrows; y++)
-                {
-                    i = label_video[z]->val[j][0] % k;
-                    sp = intersection->labels[i];
-                    scnLabel[z]->data[j] = sp;
-                    j++;
-                }
-            j = 0;
-        }
-        printf("Preparing to save images\n");
-        Imax = GetMaxValVoxel(scnLabel, frames);
-        if (bloco == 0) {
-            folder = nSVX;
-        }
-        value = getAverageColor(scnLabel, video, frames, Imax, randowColorLabels, typeOfColoring);
-
-        nSVXcomputed = computedSupervoxelsVideo(randowColorLabels, numMaxTree);
-
-        snprintf(filed, 1023, "%s/%03d", outputPath, folder);
-        if (stat(filed, &st) != 0)
-        {
-
-            if (mkdir(filed, S_IRWXU) != 0)
-            {
-                fprintf(stderr, "Unable to create the output directories at %s", outputPath);
-            }
-        }
-        
-        n = scnLabel[0]->ncols * scnLabel[0]->nrows;
-        // Aqui eu altero para gravar ou não a interseção duas vezes na pasta
-        if (bloco != 0) {
-            nFrame = nFrame - imgPorIntersecao;
-        }
-        
-        for (i = 0; i < frames; i++)
-        {
-            nFrame = nFrame + 1;
-            ctmp = gft::CImage::Create(scnLabel[i]);
-            
-            for (j = 0; j < n; j++)
-            {
-                y = label_video[i]->val[j][0] % k;
-                (ctmp->C[0])->data[j] = (int)value[0][intersection->labels[y]];
-                (ctmp->C[1])->data[j] = (int)value[1][intersection->labels[y]];
-                (ctmp->C[2])->data[j] = (int)value[2][intersection->labels[y]];
-            }
-            
-            snprintf(concat_ppm, 1023, "%s/%03d/frame%d.ppm", outputPath, folder, nFrame);
-            gft::CImage::Write(ctmp, (char *)concat_ppm);
-            gft::CImage::Destroy(&ctmp);
-        }
-
-        for (z = 0; z < frames; z++)
-        {
-            gft::Image32::Destroy(&scnLabel[z]);
-        }
-        delete[] scnLabel;
-        Liberar_matriz(3, Imax, value);
-        printf("Saved PPM images\n");
-        free(video);
-        free(label_video);
-        deleteIntersection(intersection);
-        
-        
-        //printf("Bloco: %d\n", bloco);
-
-        printf("Images saved\n\n\n");
-
-        if (img != NULL)
-            gft::Image32::Destroy(&img);
     }
 
-    printf("Time elapsed total video: %.3f seconds\n\n", sumTotalTime);
-
-    // Liberar espaço das cores dos labels
-    for (int j = 0; j < numMaxTree; j++) {
-        delete[] randowColorLabels[j];
-    }
-    delete[] randowColorLabels;
-    
     return 0;
 }

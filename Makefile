@@ -17,7 +17,6 @@ LINKS= -lpthread -lz -lm
 GFTLIB  = -L$(GFT_DIR)/lib -lgft
 GFTFLAGS  = -I$(GFT_DIR)/include
 
-
 #Rules
 all: run
 
@@ -25,16 +24,22 @@ libgft:
 	$(MAKE) -C $(GFT_DIR)
 
 streamISF: streamISF.cpp intersection.cpp libgft
-	make -f MakefileDisf.make
+	# make -f MakefileDisf.make
 	$(CXX) $(FLAGS) $(GFTFLAGS) \
 		streamISF.cpp intersection.cpp $(GFTLIB) -o streamISF $(LINKS) -I $(DISF_LIB)/include -I $(DISF_LIB)/externals -L $(DISF_LIB)/lib -ldisf -g
 
-run: clean streamISF
-#	./streamISF ./datasets/soccer output/soccer 5000 100 150 1 0 1 50
-#	./streamISF ./datasets/girl output/girl 5000 100 100 1 0 1 50
-	./streamISF ./dataset/handwaving1 output/handwaving1 3000 30 100 1 0 1 50
-#	./streamISF ./dataset/walking5 output/walking5 3000 30 100 1 0 1 50
+run: streamISF
+	./streamISF ./dataset/handwaving1 3000 30 100 1 0 1 50 1
+	./streamISF ./dataset/handwaving2 3000 30 100 1 0 1 50 1
+	./streamISF ./dataset/handwaving3 3000 30 100 1 0 1 50 1
+	./streamISF ./dataset/handwaving4 3000 30 100 1 0 1 50 1
+	./streamISF ./dataset/handwaving5 3000 30 100 1 0 1 50 1
+	./streamISF ./dataset/walking1 3000 30 100 1 0 1 50 2
+	./streamISF ./dataset/walking2 3000 30 100 1 0 1 50 2
+	./streamISF ./dataset/walking3 3000 30 100 1 0 1 50 2
+	./streamISF ./dataset/walking4 3000 30 100 1 0 1 50 2
+	./streamISF ./dataset/walking5 3000 30 100 1 0 1 50 2
 
 clean:
-	make -f MakefileDisf.make clean
+	# make -f MakefileDisf.make clean
 	$(RM) *~ *.o streamISF

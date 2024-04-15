@@ -14,16 +14,17 @@ Para compilar GFT:
 4. Se ocorrer o erro "fatal error: zlib.h: No such file or directory", então você tem que instalar o pacote do zlib: zlib1g-dev
    Repita novamente o passo 3.
 
-5. Entre na pasta do programa que usa a gft e faça:
+5. Para compilar o Makefile:
+   make -f MakefileDisf.make clean
+   make -f MakefileDisf.make
+
+6. Converter imagens para escala de cinza (opcional):
+   python3 toGray.py _pastaOrigem_ _pastaDestino_
+   (ex: python3 toGray.py dataset/girl dataset/grayGirl)
+
+7. Para compilar e excutar o código: 
    make clean
    make
 
-Para compilar o restante:
-
-make -f MakefileDisf.make clean
-make -f MakefileDisf.make
-
-make clean
-make
-
-python3 node.py
+8. Para criar as relações temporais dos videos:
+   python3 node.py
