@@ -2,39 +2,14 @@
 
 Para compilar GFT:
 
-1. Copiar os arquivos da "gft" em alguma pasta do seu computador.
+1. Para executar o código:
 
-2. Criar uma variável de ambiente GFT_DIR e colocar no .bashrc:
+   python3 methodMaxFlow.py
 
-   export export GFT_DIR=/home/danielle/gft
+2. Serão gerados os seguintes arquivos:
 
-3. Entrar na pasta da "gft" e fazer:
-   
-   make clean
-   
-   make
-
-4. Se ocorrer o erro "fatal error: zlib.h: No such file or directory", então você tem que instalar o pacote do zlib: zlib1g-dev
-   Repita novamente o passo 3.
-
-5. Para compilar o Makefile:
-
-   make -f MakefileDisf.make clean
-   
-   make -f MakefileDisf.make
-
-6. Converter imagens para escala de cinza (opcional):
-    
-   python3 toGray.py _pastaOrigem_ _pastaDestino_
-   
-   (ex: python3 toGray.py dataset/girl dataset/grayGirl)
-
-7. Para compilar e excutar o código:
-
-   make clean
-   
-   make
-
-8. Para criar as relações temporais dos videos:
-   
-   python3 node.py
+   A.txt -> Aresta direcionada no estilo "Nó_origem, Nó_destino"
+   edge_attributes.txt -> Peso da aresta. Indica se a aresta pertence a um frame ou se representa uma relação temporal
+   node_labels.txt -> Apresenta o valor do fluxo máximo calculado entre um par de nós de dois subgrafos (frames) subsequentes
+   graph_indicator.txt -> Atribui um id para cada grafo
+   graph_labels.txt -> Apresenta a classe de cada grafo
