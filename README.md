@@ -1,3 +1,3 @@
-# Temporal Graphs: A video classification based on transitive reduction
+# Video Classification Based On Temporal Graphs
 
 In development...
