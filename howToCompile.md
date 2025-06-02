@@ -8,13 +8,13 @@ Este repositório permite gerar e classificar grafos temporais a partir de víde
 
 Os dados estão organizados nas seguintes pastas:
 
-* **`ConjuntoMatriz/`**
+* **`ConjuntoMatriz`**
   Vídeos sintéticos de baixa complexidade, construídos a partir da aplicação de valores de 1 a 4 (simbolizando cores) em uma matriz 5x5.
 
-* **`ConjuntoKTH/`**
+* **`ConjuntoKTH`**
   Vídeos reais do dataset KTH. Foram selecionados os cinco primeiros vídeos das classes *handwaving* e *walking*.
 
-* **`ConjuntoColoracao/`**
+* **`ConjuntoColoracao`**
   Vídeos sintéticos a partir da coloração manual dos 14 primeiros frames do primeiro vídeo de cada classe do recorte do KTH. Cada frame foi replicado 5 vezes por classe.
 
 ---
@@ -33,7 +33,7 @@ Os dados estão organizados nas seguintes pastas:
    python3 methodMaxFlow.py
    ```
 
-   Ou, para gerar grafos temporais acíclicos:
+   Ou, para gerar os grafos temporais acíclicos:
 
    ```bash
    python3 methodPixel.py
@@ -43,7 +43,7 @@ Os dados estão organizados nas seguintes pastas:
 
    * `teste_A.txt` – Arestas direcionadas no formato `nó_origem, nó_destino`.
    * `teste_edge_attributes.txt` – Pesos das arestas (identificam relações intra-frame ou temporais).
-   * `teste_node_labels.txt` – Valor do fluxo máximo entre pares de nós de subgrafos consecutivos.
+   * `teste_node_labels.txt` – Valor do fluxo máximo entre pares de nós de subgrafos (frames) consecutivos.
    * `teste_graph_indicator.txt` – Atribui um ID a cada grafo.
    * `teste_graph_labels.txt` – Classe de cada grafo.
    * `teste_node_info.txt` – Quantidade de pixels por região (apenas para grafos acíclicos).
@@ -87,7 +87,7 @@ Os dados estão organizados nas seguintes pastas:
 
 9. Gere os grafos acíclicos (passo 2) e realize o passo 7.
 
-10. Pelo terminal, acesse a pasta do benchmark:
+10. Acesse a pasta do benchmark:
 
 ```bash
 cd tudataset/tud_benchmark
@@ -109,8 +109,8 @@ Local: `tudataset/tud_benchmark/output/teste`
 13. Substitua os arquivos de mesmo nome da pasta `tudataset/tud_benchmark/datasets/teste/teste/raw` por estes novos:
 
 ```bash
-mv output/teste/A.txt datasets/teste/teste/raw/teste_A.txt
-mv output/teste/edge_attributes.txt datasets/teste/teste/raw/teste_edge_attributes.txt
+mv output/teste/teste_A.txt datasets/teste/teste/raw/teste_A.txt
+mv output/teste/teste_edge_attributes.txt datasets/teste/teste/raw/teste_edge_attributes.txt
 ```
 
 14. Execute o script de classificação:
